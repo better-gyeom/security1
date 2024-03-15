@@ -39,7 +39,6 @@ public class IndexController {
         return "manager";
     }
 
-
     //스프링 시큐리티가 해당 주소를 낚아채던 것을 - SecurityConfig에서 설정한 후 낚아채지 않음
     @GetMapping("/loginForm")
     public String loginForm() {
@@ -53,11 +52,11 @@ public class IndexController {
 
     @PostMapping("/join")
     public @ResponseBody String join(User user) {
-        System.out.println(user);
         user.setRole("USER");
         String rawPwd = user.getPassword();
         String encPwd = bCryptPasswordEncoder.encode(rawPwd); //암호화
         user.setPassword(encPwd);
+
         userRepository.save(user); //회원가입은 잘 되지만 비밀번호가 암호화되지 않았다. -> 시큐리티 로그인 불가넝
         return "redirect:/loginForm";
     }

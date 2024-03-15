@@ -21,10 +21,12 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf(CsrfConfigurer::disable);
 
-        http.formLogin((auth) -> auth.loginPage("/loginForm").permitAll()); //로그인 페이지로 이동하게 함
+        http.formLogin((auth) -> auth.loginPage("/loginForm").permitAll() //로그인 페이지로 이동하게 함
+                .loginProcessingUrl("/login") //login 주소가 호출이 되면 시큐리티가 낚아채서 대신 로그인 진행
+                .defaultSuccessUrl("/"));
 
         http.authorizeHttpRequests((auth) -> auth
-                .requestMatchers("/user/**").authenticated() //인증 필요
+                .requestMatchers("/user/**").authenticated() //인증만 되면 들어갈 수 있는 주소
                 .requestMatchers("/manager/**").hasAnyRole("ADMIN", "MANAGER") //역할 필요
                 .requestMatchers("/admin/**").hasAnyRole("ADMIN") //역할 필요
                 .anyRequest().permitAll()); //그 외엔 모두 허용
