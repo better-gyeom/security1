@@ -1,11 +1,23 @@
 package com.cos.security1.controller;
 
+import com.cos.security1.model.User;
+import com.cos.security1.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class IndexController {
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @GetMapping({"", "/"})
     public String index() {
@@ -39,13 +51,15 @@ public class IndexController {
         return "joinForm";
     }
 
-    @GetMapping("/join")
-    public @ResponseBody String join() {
-        return "join";
+    @PostMapping("/join")
+    public @ResponseBody String join(User user) {
+        System.out.println(user);
+        user.setRole("USER");
+        String rawPwd = user.getPassword();
+        String encPwd = bCryptPasswordEncoder.encode(rawPwd); //암호화
+        user.setPassword(encPwd);
+        userRepository.save(user); //회원가입은 잘 되지만 비밀번호가 암호화되지 않았다. -> 시큐리티 로그인 불가넝
+        return "redirect:/loginForm";
     }
 
-    @GetMapping("/joinProc")
-    public @ResponseBody String joinProc() {
-        return "회원가입 완료됨!";
-    }
 }
