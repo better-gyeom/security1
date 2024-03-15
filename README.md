@@ -19,3 +19,6 @@ create database security;
 use security;
 ```
 
+### SecurityConfig 파일에서 WebSecurityConfigurerAdapter deprecated
+
+더 이상 사용되지 않기 때문에 대체 코드로 수정
