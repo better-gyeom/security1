@@ -3,6 +3,8 @@ package com.cos.security1.controller;
 import com.cos.security1.model.User;
 import com.cos.security1.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -52,7 +54,7 @@ public class IndexController {
 
     @PostMapping("/join")
     public @ResponseBody String join(User user) {
-        user.setRole("USER");
+        user.setRole("ROLE_USER");
         String rawPwd = user.getPassword();
         String encPwd = bCryptPasswordEncoder.encode(rawPwd); //암호화
         user.setPassword(encPwd);
@@ -61,4 +63,15 @@ public class IndexController {
         return "redirect:/loginForm";
     }
 
+    @Secured("ROLE_ADMIN")
+    @GetMapping("/info")
+    public @ResponseBody String info() {
+        return "개인정보";
+    }
+
+    @PreAuthorize("hasRole('ROLE_MANAGER') or hasRole('ROLE_ADMIN')")
+    @GetMapping("/data")
+    public @ResponseBody String data() {
+        return "데이터정보";
+    }
 }
