@@ -35,7 +35,9 @@ public class SecurityConfig {
                 .requestMatchers("/admin/**").hasAnyRole("ADMIN") //역할 필요
                 .anyRequest().permitAll()); //그 외엔 모두 허용
 
+        http.oauth2Login((auth) -> auth.loginPage("/loginForm")); //구글 로그인 완료된 후의 후처리 필요
 
         return http.build();
     }
+
 }
